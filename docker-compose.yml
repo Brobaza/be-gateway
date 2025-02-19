@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:17.0-alpine3.20
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+  redis:
+    image: redis:8.0-M02-alpine3.20
+    container_name: redis
+    restart: unless-stopped
+    command: ['redis-server', '--notify-keyspace-events', 'Ex']
+    ports:
+      - 6379:6379
+    networks:
+      - mynetwork
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/mongo:/data/db
+    networks:
+      - mynetwork
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    platform: linux/x86_64
+    restart: unless-stopped
+    networks:
+      - mynetwork
+    ports:
+      - 8025:8025
+      - 1025:1025
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    networks:
+      - mynetwork
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    networks:
+      - mynetwork
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    restart: always
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_NUM_PARTITIONS: 3
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    networks:
+      - mynetwork
+    depends_on:
+      - kafka
+    ports:
+      - 19000:9000
+    environment:
+      KAFKA_BROKERCONNECT: kafka:29092
+
+networks:
+  mynetwork:
+    driver: bridge
