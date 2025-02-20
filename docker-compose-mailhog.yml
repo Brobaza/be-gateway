@@ -1,0 +1,15 @@
+networks:
+  mynetwork:
+    external: true
+
+services:
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
+    platform: linux/x86_64
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    restart: unless-stopped
+    networks:
+      - mynetwork
