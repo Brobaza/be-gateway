@@ -1,5 +1,6 @@
 port: 8080
 isProduction: false
+grpcUrl: ''
 prefix: /api
 version: '1'
 
