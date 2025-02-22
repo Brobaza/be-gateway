@@ -1,5 +1,5 @@
 networks:
-  mynetwork:
+  global_network:
     external: true
 
 services:
@@ -11,4 +11,4 @@ services:
     ports:
       - 6379:6379
     networks:
-      - mynetwork
+      - global_network
