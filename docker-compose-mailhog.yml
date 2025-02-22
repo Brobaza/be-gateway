@@ -1,5 +1,5 @@
 networks:
-  mynetwork:
+  global_network:
     external: true
 
 services:
@@ -12,4 +12,4 @@ services:
       - '8025:8025'
     restart: unless-stopped
     networks:
-      - mynetwork
+      - global_network
