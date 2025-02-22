@@ -1,19 +1,19 @@
 networks:
-  mynetwork:
+  global_network:
     external: true
 
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     networks:
-      - mynetwork
+      - global_network
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
     image: confluentinc/cp-kafka:latest
     networks:
-      - mynetwork
+      - global_network
     depends_on:
       - zookeeper
     ports:
