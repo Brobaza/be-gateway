@@ -1,6 +1,6 @@
 port: 8080
-isProduction: false
-grpcUrl: ''
+isProd: false
+grpcUrl: '0.0.0.0:3004'
 prefix: /api
 version: '1'
 
@@ -10,18 +10,18 @@ verificationPath:
   resetPassword: /reset-password
 
 redis:
-  host: localhost
+  host: redis
   port: 6379
   password: ''
   database: 0
   prefix: 'dailydev'
 
 postgres:
-  host: localhost
+  host: postgres
   port: 5432
   username: postgres
   password: postgres
-  database: postgres
+  database: auth_service
 
 agenda:
   uri: mongodb://localhost:27017
@@ -61,11 +61,11 @@ kafka:
 
 services:
   auth:
-    port: 0.0.0.0:5005
+    port: '0.0.0.0:3002'
     prefix: /api
     version: '1'
   user:
-    port: 0.0.0.0:5002
+    port: 0.0.0.0:3004
     prefix: /api
     version: '1'
   mail:
@@ -76,3 +76,9 @@ services:
     port: 0.0.0.0:5003
     prefix: /api
     version: '1'
+
+redisLock:
+  driftFactor: 0.01
+  retryJitter: 200
+  retryCount: 100
+  retryDelay: 200
