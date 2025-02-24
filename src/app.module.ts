@@ -35,7 +35,7 @@ import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh-token.strategy
           options: {
             protoPath: join(__dirname, '../proto/user.service.proto'),
             package: MICROSERVICE_PACKAGE_NAME.USER_SERVICE,
-            url: configService.get<string>('services.user.port'),
+            url: `${configService.get<string>('services.user.container_name')}:${configService.get<string>('services.user.port')}`,
           },
         }),
         inject: [ConfigService],
@@ -48,7 +48,7 @@ import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh-token.strategy
           options: {
             protoPath: join(__dirname, '../proto/auth.service.proto'),
             package: MICROSERVICE_PACKAGE_NAME.AUTH_SERVICE,
-            url: configService.get<string>('services.auth.port'),
+            url: `${configService.get<string>('services.auth.container_name')}:${configService.get<string>('services.auth.port')}`,
           },
         }),
         inject: [ConfigService],
