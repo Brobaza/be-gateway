@@ -89,7 +89,9 @@ export class JwtAccessTokenStrategy
         this.userDomain.getUser({ id: userId }),
       );
 
-      if (!isEmpty(user?.id)) {
+      console.log("User data: ", user);
+
+      if (isEmpty(user?.id)) {
         throw new UnauthorizedException({
           code: ErrorDictionary.USER_NOTFOUND,
         });
