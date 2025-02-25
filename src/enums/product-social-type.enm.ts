@@ -1,0 +1,10 @@
+export enum ProductSocialType {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+  UNLISTED = 'UNLISTED',
+  INTERNAL = 'INTERNAL',
+  HIDDEN = 'HIDDEN',
+  DELETED = 'DELETED',
+  DRAFT = 'DRAFT',
+  PENDING = 'PENDING',
+}
