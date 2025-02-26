@@ -12,4 +12,8 @@ export class ProductLabelsService extends BaseService<ProductLabels> {
   ) {
     super(productLabelsRepository);
   }
+
+  async removeByProductId(productId: string): Promise<void> {
+    await this.productLabelsRepository.delete({ product: { id: productId } });
+  }
 }
