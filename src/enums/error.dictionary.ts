@@ -27,6 +27,8 @@ export enum ErrorDictionary {
   PRODUCT_NOT_FOUND = 'ProductNotFound',
   PRODUCT_OUT_OF_STOCK = 'ProductOutOfStock',
   PRODUCT_SLUG_TAKEN = 'ProductSlugAlreadyTaken',
+  PRODUCT_QUANTITY_INVALID = 'ProductQuantityInvalid',
+  PRODUCT_NOT_AVAILABLE = 'ProductNotAvailable',
 
   //* bank
   BANK_NOT_FOUND = 'BankNotFound',

@@ -37,6 +37,7 @@ import { ProductReviewService } from './services/product_review.service';
 import { ProductTagService } from './services/product_tag.service';
 import { ProductVariantService } from './services/product_variant.service';
 import { UserDomain } from './domains/user.domain';
+import { CategoryController } from './controllers/category.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -111,7 +112,7 @@ import { UserDomain } from './domains/user.domain';
     JwtModule.register({}),
     ScheduleModule.forRoot(),
   ],
-  controllers: [AppController, AuthController, UserController],
+  controllers: [AppController, AuthController, UserController , CategoryController],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
     AppService,
