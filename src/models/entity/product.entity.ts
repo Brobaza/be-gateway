@@ -1,4 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { InventoryType } from 'src/enums/inventory-type.enum';
+import { ProductGender } from 'src/enums/product-gender.enum';
+import { ProductSocialType } from 'src/enums/product-social-type.enm';
 import { BaseEntity } from 'src/libs/base/base.entity';
 import { DecimalToNumberTransformer } from 'src/transformer/decimal-to-number.transform';
 import {
@@ -7,18 +10,16 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
-  OneToMany,
+  OneToMany
 } from 'typeorm';
 import { Category } from './category.entity';
-import { InventoryType } from 'src/enums/inventory-type.enum';
-import { ProductSocialType } from 'src/enums/product-social-type.enm';
-import { ProductRating } from './product_rating.entity';
-import { ProductVariant } from './product_variant.entity';
-import { ProductGender } from 'src/enums/product-gender.enum';
-import { ProductReviews } from './product_reviews.entity';
 import { ProductLabels } from './product_labels.entity';
+import { ProductRating } from './product_rating.entity';
+import { ProductReviews } from './product_reviews.entity';
 import { ProductTags } from './product_tags.entity';
+import { ProductVariant } from './product_variant.entity';
 
 @Entity({ name: 'product' })
 export class Product extends BaseEntity {
@@ -71,6 +72,10 @@ export class Product extends BaseEntity {
   @ApiProperty({ example: ['7', '́'] })
   @Column({ type: 'varchar', array: true, nullable: true })
   sizes: string[];
+
+  @ApiProperty({ example: ['red', 'yellow'] })
+  @Column({ type: 'varchar', array: true, nullable: true })
+  colors: string[];
 
   @Index('idx_product_inventory_status')
   @ApiProperty({ example: 'IN_STOCK' })
@@ -134,6 +139,6 @@ export class Product extends BaseEntity {
   @OneToMany(() => ProductLabels, (label) => label.product)
   labels: ProductLabels[];
 
-  @OneToMany(() => ProductTags, (tag) => tag.product)
+  @ManyToMany(() => ProductTags, (discount) => discount.products)
   tags: ProductTags[];
 }
