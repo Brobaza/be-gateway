@@ -12,7 +12,7 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
-  OneToMany
+  OneToMany,
 } from 'typeorm';
 import { Category } from './category.entity';
 import { ProductLabels } from './product_labels.entity';
@@ -28,7 +28,7 @@ export class Product extends BaseEntity {
   @Column()
   name: string;
 
-  @Index('idx_product_price')
+  @Index('idx_product_max_price')
   @ApiProperty({ example: 1000 })
   @Column({
     type: 'decimal',
@@ -36,9 +36,9 @@ export class Product extends BaseEntity {
     scale: 2,
     transformer: new DecimalToNumberTransformer(),
   })
-  price: number;
+  maxPrice: number;
 
-  @Index('idx_product_sale_price')
+  @Index('idx_product_min_price')
   @ApiProperty({ example: 1000 })
   @Column({
     type: 'decimal',
@@ -46,10 +46,10 @@ export class Product extends BaseEntity {
     scale: 2,
     transformer: new DecimalToNumberTransformer(),
   })
-  salePrice: number;
+  minPrice: number;
 
   @ApiProperty({ example: 100 })
-  @Column()
+  @Column({ type: 'int' })
   quantity: number;
 
   @Index('idx_product_slug')
@@ -81,7 +81,7 @@ export class Product extends BaseEntity {
   @ApiProperty({ example: 'IN_STOCK' })
   @Column({
     type: 'enum',
-    enum: InventoryType,
+    enum: Object.values(InventoryType),
     default: InventoryType.IN_STOCK,
   })
   inventoryStatus: InventoryType;
@@ -89,7 +89,7 @@ export class Product extends BaseEntity {
   @ApiProperty({ example: 'PUBLIC' })
   @Column({
     type: 'enum',
-    enum: ProductSocialType,
+    enum: Object.values(ProductSocialType),
     default: ProductSocialType.PUBLIC,
   })
   socialType: string;

@@ -38,6 +38,17 @@ import { ProductTagService } from './services/product_tag.service';
 import { ProductVariantService } from './services/product_variant.service';
 import { UserDomain } from './domains/user.domain';
 import { CategoryController } from './controllers/category.controller';
+import { Cart } from './models/entity/cart.entity';
+import { DeliveryCenter } from './models/entity/delivery_center.entity';
+import { Discount } from './models/entity/discount.entity';
+import { Order } from './models/entity/order.entity';
+import { ProductController } from './controllers/product.controller';
+import { ProductTagController } from './controllers/product_tag.controller';
+import { DeliveryHistory } from './models/entity/delivery_history.entity';
+import { Notification } from './models/entity/notification.entity';
+import { ConsumerService } from './queue/consumer.service';
+import { ProducerService } from './queue/producer.service';
+import { ClientQueueService } from './queue/client-queue.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -77,6 +88,12 @@ import { CategoryController } from './controllers/category.controller';
       ProductReviews,
       ProductTags,
       ProductVariant,
+      Cart,
+      DeliveryCenter,
+      Discount,
+      Notification,
+      Order,
+      DeliveryHistory,
     ]),
 
     ClientsModule.registerAsync([
@@ -112,19 +129,37 @@ import { CategoryController } from './controllers/category.controller';
     JwtModule.register({}),
     ScheduleModule.forRoot(),
   ],
-  controllers: [AppController, AuthController, UserController , CategoryController],
+  controllers: [
+    AppController,
+    AuthController,
+    UserController,
+    CategoryController,
+    ProductController,
+    ProductTagController,
+  ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
+
+    // * apps
     AppService,
     AppLoggerService,
 
+    // * strategies
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
 
+    // * db utils
     TransactionDomain,
 
+    // * queue service
+    ConsumerService,
+    ProducerService,
+    ClientQueueService,
+
+    // * domain
     UserDomain,
 
+    // * services
     AuthService,
     UserService,
     ProductService,

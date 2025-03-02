@@ -13,7 +13,7 @@ import { Product } from './product.entity';
 @Entity({ name: 'product_tags' })
 export class ProductTags extends BaseEntity {
   @ApiProperty({ example: 'Technology' })
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: false, unique: true })
   name: string;
 
   @ManyToMany(() => Product, (product) => product.tags)
