@@ -36,4 +36,8 @@ export class UserDomain implements OnModuleInit {
 
     return resp;
   }
+
+  getUserDomain() {
+    return this.userDomain;
+  }
 }

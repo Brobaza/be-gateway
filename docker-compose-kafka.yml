@@ -31,7 +31,7 @@ services:
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     networks:
-      - mynetwork
+      - global_network
     depends_on:
       - kafka
     ports:

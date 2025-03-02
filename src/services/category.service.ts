@@ -1,10 +1,12 @@
 import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { get, isNil } from 'lodash';
 import { ErrorDictionary } from 'src/enums/error.dictionary';
 import { BaseService } from 'src/libs/base/base.service';
 import { Category } from 'src/models/entity/category.entity';
 import { BaseFindAndCountRequest } from 'src/models/request/base-find-and-count.request';
 import { CreateCategoryRequest } from 'src/models/request/create-category.request';
+import { CreatedResponse } from 'src/models/response/created.response';
 import { FindAndCountResponse } from 'src/models/response/find-and-count.response';
 import { ILike, Repository } from 'typeorm';
 
@@ -18,6 +20,12 @@ export class CategoryService extends BaseService<Category> {
   }
 
   async update(id: string, data: CreateCategoryRequest): Promise<void> {
+    const parentId = get(data, 'parentId', null);
+
+    if (!isNil(parentId)) {
+      await this.validate({ categoryId: parentId });
+    }
+
     await this.updateById(id, data);
   }
 
@@ -49,5 +57,22 @@ export class CategoryService extends BaseService<Category> {
       take: limit,
       relations: ['children'],
     });
+  }
+
+  async createCategory(
+    request: CreateCategoryRequest,
+  ): Promise<CreatedResponse> {
+    const parentId = get(request, 'parentId', null);
+
+    if (!isNil(parentId)) {
+      await this.validate({ categoryId: parentId });
+
+      return this.create({
+        ...request,
+        parent: { id: parentId },
+      });
+    }
+
+    return await this.create(request);
   }
 }

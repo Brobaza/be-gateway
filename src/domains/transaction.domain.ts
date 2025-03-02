@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
-
 @Injectable()
 export class TransactionDomain {
   constructor(private readonly dataSource: DataSource) {}

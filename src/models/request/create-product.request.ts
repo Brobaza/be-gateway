@@ -14,30 +14,13 @@ import {
 import { CreateProductLabelRequest } from './create-product-label.request';
 import { Type } from 'class-transformer';
 import { InventoryType } from 'src/enums/inventory-type.enum';
+import { CreateProductVariantRequest } from './create-product-variant.request';
 
 export class CreateProductRequest {
   @ApiProperty({ example: 'Product name' })
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @ApiProperty({ example: 10 })
-  @Min(1)
-  @IsNumber()
-  @IsNotEmpty()
-  price: number;
-
-  @ApiProperty({ example: 9 })
-  @Min(1)
-  @IsNumber()
-  @IsNotEmpty()
-  salePrice: number;
-
-  @ApiProperty({ example: 1 })
-  @Min(1)
-  @IsNumber()
-  @IsNotEmpty()
-  quantity: number;
 
   @ApiProperty({
     example: [
@@ -113,6 +96,19 @@ export class CreateProductRequest {
   @Type(() => CreateProductLabelRequest)
   @IsOptional()
   labels?: CreateProductLabelRequest[];
+
+  @ApiProperty({
+    type: [CreateProductVariantRequest],
+    example: [
+      { title: 'SALE', price: 10, salePrice: 9, quantity: 1 },
+      { title: 'SALE', price: 10, salePrice: 9, quantity: 1 },
+    ],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateProductVariantRequest)
+  @IsNotEmpty()
+  variants: CreateProductVariantRequest[];
 
   @ApiProperty({ example: '4510c78a-2d61-41b5-93e3-d43a2422f3d8' })
   @IsUUID()
