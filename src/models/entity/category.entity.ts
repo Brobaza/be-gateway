@@ -16,7 +16,7 @@ import { Product } from './product.entity';
 export class Category extends BaseEntity {
   @Index('idx_category_name')
   @ApiProperty({ example: 'Smartphone' })
-  @Column()
+  @Column({ unique: true, nullable: false })
   name: string;
 
   @Index('idx_category_slug')
