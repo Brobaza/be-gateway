@@ -71,7 +71,15 @@ export class ProductController {
   @PublicRoute()
   @Get(':id')
   async findById(@Param() { id }: IdRequest): Promise<Product> {
-    const result = await this.productsService.findByIdOrFail(id, 'category');
+    const result = await this.productsService.findByIdOrFail(
+      id,
+      'category',
+      'product_rating',
+      'product_variant',
+      'product_reviews',
+      'product_labels',
+      'product_tags',
+    );
     return result;
   }
 
@@ -80,7 +88,15 @@ export class ProductController {
   @PublicRoute()
   @Get('/get-by-slug/:slug')
   async findBySlug(@Param() { slug }: SlugRequest): Promise<Product> {
-    const result = await this.productsService.findBySlug(slug, 'category');
+    const result = await this.productsService.findBySlug(
+      slug,
+      'category',
+      'product_rating',
+      'product_variant',
+      'product_reviews',
+      'product_labels',
+      'product_tags',
+    );
     return result;
   }
 

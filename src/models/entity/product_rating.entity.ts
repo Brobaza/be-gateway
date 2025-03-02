@@ -18,7 +18,9 @@ export class ProductRating extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   reviewCount: number;
 
-  @ManyToOne(() => Product, (product) => product.ratings)
+  @ManyToOne(() => Product, (product) => product.ratings, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 }
