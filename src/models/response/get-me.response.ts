@@ -1,7 +1,7 @@
 export class GetMeResponse {
   id: string;
-  displayName: string;
-  photoUrl: string;
+  name: string;
+  avatar: string;
   phoneNumber: string;
   country: string;
   address: string;

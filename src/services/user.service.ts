@@ -6,6 +6,7 @@ import { Address } from 'src/gen/user.service';
 import { BaseFindAndCountRequest } from 'src/models/request/base-find-and-count.request';
 import { CreateAddrestRequest } from 'src/models/request/create-address.request';
 import { UpdateAddressRequest } from 'src/models/request/update-address.request';
+import { UpdateUserRequest } from 'src/models/request/update-user.request';
 
 @Injectable()
 export class UserService {
@@ -191,5 +192,42 @@ export class UserService {
     }
 
     return address;
+  }
+
+  async updateMe(userId: string, req: UpdateUserRequest) {
+    const userGrpc = this.userDomain.getUserDomain();
+
+    const resp = await firstValueFrom(
+      userGrpc.updateUser({
+        id: userId,
+        gender: get(req, 'gender', ''),
+        photoUrl: get(req, 'photoUrl', ''),
+        country: get(req, 'country', ''),
+        city: get(req, 'city', ''),
+        address: get(req, 'address', ''),
+        state: get(req, 'state', ''),
+        zipCode: get(req, 'zipCode', ''),
+        about: get(req, 'about', ''),
+        role: '',
+        name: get(req, 'name', ''),
+        email: get(req, 'email', ''),
+        phoneNumber: get(req, 'phoneNumber', ''),
+        location: get(req, 'location', ''),
+      }),
+    );
+
+    const { id, message, errMessage, code } = resp;
+
+    if (code !== '200' || !isEmpty(errMessage) || isEmpty(id)) {
+      throw new ConflictException({
+        code,
+        message,
+        errMessage,
+      });
+    }
+
+    return {
+      message,
+    };
   }
 }

@@ -19,6 +19,7 @@ import { BaseFindAndCountRequest } from 'src/models/request/base-find-and-count.
 import { CreateAddrestRequest } from 'src/models/request/create-address.request';
 import { IdRequest } from 'src/models/request/id.request';
 import { UpdateAddressRequest } from 'src/models/request/update-address.request';
+import { UpdateUserRequest } from 'src/models/request/update-user.request';
 import { AddressResponse } from 'src/models/response/address.response';
 import { CreatedResponse } from 'src/models/response/created.response';
 import { FindAndCountResponse } from 'src/models/response/find-and-count.response';
@@ -33,8 +34,20 @@ import { UserService } from 'src/services/user.service';
   path: 'users',
   version: '1',
 })
-export class UserController {
+export class CliUserController {
   constructor(private readonly userService: UserService) {}
+  @ApiResponse({ type: () => OkResponse })
+  @HttpCode(HttpStatus.OK)
+  @Patch('/me')
+  async updateMe(
+    @CurrentUserId() userId: string,
+    @Body() body: UpdateUserRequest,
+  ): Promise<OkResponse> {
+    await this.userService.updateMe(userId, body);
+    return {
+      success: true,
+    };
+  }
 
   @ApiResponse({ type: () => () => GetMeResponse })
   @HttpCode(HttpStatus.OK)

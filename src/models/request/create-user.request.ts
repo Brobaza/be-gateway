@@ -12,7 +12,7 @@ import { EGender } from 'src/enums/gender.enum';
 export class createUserDto {
   @IsString()
   @IsNotEmpty()
-  displayName: string;
+  name: string;
 
   @IsPhoneNumber()
   @IsNotEmpty()
@@ -25,8 +25,11 @@ export class createUserDto {
 
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   gender?: EGender;
+
+  @IsString()
+  @IsNotEmpty()
+  location: string;
 
   @IsStrongPassword()
   @IsNotEmpty()

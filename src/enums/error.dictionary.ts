@@ -58,10 +58,13 @@ export enum ErrorDictionary {
   UNSUPPORTED_VERIFICATION_TYPE = 'UnsupportedVerificationType',
   TO_MANY_VERIFICATION_REQUEST = 'ToManyVerificationRequest',
   EMAIL_ALREADY_TAKEN = 'EmailAlreadyTaken',
+  PHONE_NUMBER_ALREADY_TAKEN = 'PhoneNumberAlreadyTaken',
   USERNAME_ALREADY_TAKEN = 'UsernameAlreadyTaken',
   USER_ALREADY_ADMIN = 'UserAlreadyAdmin',
   USER_ALREADY_INACTIVE = 'UserAlreadyInactive',
   USER_ALREADY_ACTIVE = 'UserAlreadyActive',
+  EMAIL_OR_PHONE_NUMBER_ALREADY_TAKEN = 'EmailOrPhoneNumberAlreadyTaken',
+  USER_NOT_VERIFIED = 'UserNotVerified',
 
   USERNAME_OR_PASSWORD_INCORRECT = 'UsernameOrPasswordIncorrect',
   USERNAME_INCORRECT = 'UsernameIncorrect',
