@@ -20,6 +20,7 @@ import { ProductRating } from './product_rating.entity';
 import { ProductReviews } from './product_reviews.entity';
 import { ProductTags } from './product_tags.entity';
 import { ProductVariant } from './product_variant.entity';
+import { WishList } from './wish_list.entity';
 
 @Entity({ name: 'product' })
 export class Product extends BaseEntity {
@@ -141,4 +142,7 @@ export class Product extends BaseEntity {
 
   @ManyToMany(() => ProductTags, (discount) => discount.products)
   tags: ProductTags[];
+
+  @OneToMany(() => WishList, (wishList) => wishList.product)
+  wish_list: WishList[];
 }

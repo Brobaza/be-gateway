@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ClientGrpcProxy } from '@nestjs/microservices';
-import { isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { ErrorDictionary } from 'src/enums/error.dictionary';
 import { AUTH_SERVICE_NAME, AuthServiceClient } from 'src/gen/auth.service';
@@ -62,19 +62,32 @@ export class AuthService implements OnModuleInit {
   }
 
   async register(dto: CreateUserRequest) {
+    console.log('dto', dto);
+
     const resp = await firstValueFrom(this.authenDomain.register(dto));
 
     const { data, metadata } = resp;
 
+    console.log('resp', resp);
+    console.log('data', data);
+
     if (isEmpty(data.accessToken) || isEmpty(data.refreshToken)) {
       throw new UnauthorizedException({
-        code: ErrorDictionary.USERNAME_INCORRECT,
+        code: get(
+          metadata,
+          'message',
+          ErrorDictionary.EMAIL_OR_PHONE_NUMBER_ALREADY_TAKEN,
+        ),
       });
     }
 
     if (metadata?.code !== '200' && !isEmpty(metadata?.errMessage)) {
       throw new UnauthorizedException({
-        code: metadata?.errMessage,
+        code: get(
+          metadata,
+          'message',
+          ErrorDictionary.EMAIL_OR_PHONE_NUMBER_ALREADY_TAKEN,
+        ),
       });
     }
 

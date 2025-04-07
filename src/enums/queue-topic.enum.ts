@@ -13,4 +13,7 @@ export enum QueueTopic {
 
   REVIEW_ACTIVITY_TOPIC = 'review-activity-topic',
   REVIEW_ACTIVITY_ACK_TOPIC = 'review-activity-ack-topic',
+
+  ADD_TO_WISH_LIST_ACTIVITY_TOPIC = 'add-to-wish-list-activity-topic',
+  REMOVE_FROM_WISH_LIST_ACTIVITY_TOPIC = 'remove-from-wish-list-activity-topic',
 }

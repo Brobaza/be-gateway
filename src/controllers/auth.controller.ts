@@ -17,13 +17,16 @@ import { OkResponse } from 'src/models/response/ok.response';
 import { RegisterResponse } from 'src/models/response/register.response';
 import { AuthService } from 'src/services/auth.service';
 
-@Controller()
+@Controller({
+  version: '1',
+  path: 'auth',
+})
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOkResponse({ type: () => LoginResponse })
   @HttpCode(HttpStatus.OK)
-  @Post('/login')
+  @Post('/sign-in')
   async login(@Body() body: LoginRequest): Promise<LoginResponse> {
     const result = await this.authService.login(body);
     return result;
@@ -31,7 +34,7 @@ export class AuthController {
 
   @ApiOkResponse({ type: () => RegisterResponse })
   @HttpCode(HttpStatus.OK)
-  @Post('/register')
+  @Post('/sign-up')
   async register(@Body() dto: CreateUserRequest): Promise<RegisterResponse> {
     const result = await this.authService.register(dto);
     return result;
@@ -41,7 +44,7 @@ export class AuthController {
   @ApiOkResponse({ type: () => OkResponse })
   @UseGuards(JwtAccessTokenGuard)
   @HttpCode(HttpStatus.OK)
-  @Post('/logout')
+  @Post('/sign-out')
   async logout(
     @CurrentUserId() userId: string,
     @CurrentSessionId() sessionId: string,

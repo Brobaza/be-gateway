@@ -1,6 +1,6 @@
 import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { forEach, get, head, last, map, reduce, sortBy } from 'lodash';
+import { get, head, last, map, reduce, sortBy } from 'lodash';
 import { TransactionDomain } from 'src/domains/transaction.domain';
 import { ErrorDictionary } from 'src/enums/error.dictionary';
 import { InventoryType } from 'src/enums/inventory-type.enum';
@@ -10,14 +10,14 @@ import { BaseService } from 'src/libs/base/base.service';
 import { Product } from 'src/models/entity/product.entity';
 import { ProductLabels } from 'src/models/entity/product_labels.entity';
 import { ProductRating } from 'src/models/entity/product_rating.entity';
-import { BaseFindAndCountRequest } from 'src/models/request/base-find-and-count.request';
+import { CreateProductVariantRequest } from 'src/models/request/create-product-variant.request';
 import { CreateProductRequest } from 'src/models/request/create-product.request';
+import { FindProductRequest } from 'src/models/request/find-product.request';
 import { CreatedResponse } from 'src/models/response/created.response';
 import { FindAndCountResponse } from 'src/models/response/find-and-count.response';
 import { ILike, Repository } from 'typeorm';
 import { ProductLabelsService } from './product_labels.service';
 import { ProductVariantService } from './product_variant.service';
-import { CreateProductVariantRequest } from 'src/models/request/create-product-variant.request';
 
 @Injectable()
 export class ProductService extends BaseService<Product> {
@@ -31,14 +31,16 @@ export class ProductService extends BaseService<Product> {
     super(productRepository);
   }
 
-  async findAll({
-    offset,
-    limit,
-    q,
-  }: BaseFindAndCountRequest): Promise<FindAndCountResponse<Product>> {
+  async findAll(
+    request: FindProductRequest,
+  ): Promise<FindAndCountResponse<Product>> {
+    const { offset, limit, q } = request;
+    const categorySlug = get(request, 'categorySlug', null);
+
     return await this.findAndCount({
       where: {
         ...(q && { name: ILike(`%${q}%`) }),
+        ...(categorySlug && { category: { slug: categorySlug } }),
       },
       skip: offset,
       take: limit,

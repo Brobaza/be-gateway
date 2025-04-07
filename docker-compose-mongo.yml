@@ -1,0 +1,16 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: unless-stopped
+    command: ['mongod', '--replSet', 'rs0']
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/mongo:/data/db
+    networks:
+      - global_network
+
+networks:
+  global_network:
+    external: true

@@ -42,6 +42,9 @@ async function bootstrap() {
 
   const port = configService.get<number>('port');
 
+  // const chatMediaProxy = createChatMediaProxy(configService);
+  // app.use('/api/v1/chat/media/upload', chatMediaProxy);
+
   await app.listen(port, () => {
     const logger: Logger = new Logger('Server connection');
     logger.log(`⛩️  Gateway has started successfully running on port ${port}`);
