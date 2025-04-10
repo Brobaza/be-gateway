@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   HttpCode,
@@ -38,10 +39,7 @@ import { Blob } from 'buffer';
   version: '1',
 })
 export class ChatController {
-  constructor(
-    private readonly chatService: ChatService,
-    private readonly httpService: HttpService,
-  ) {}
+  constructor(private readonly chatService: ChatService) {}
 
   @ApiResponse({ type: () => () => FindAndCountResponse<User> })
   @HttpCode(HttpStatus.OK)
@@ -90,6 +88,36 @@ export class ChatController {
     return { id: result };
   }
 
+  @HttpCode(HttpStatus.OK)
+  @SkipVerification()
+  @Delete('/conversations/:conversationId/messages/:messageId')
+  async deleteConversation(
+    @CurrentUserId() userId: string,
+    @Param('conversationId') conversationId: string,
+    @Param('messageId') messageId: string,
+  ): Promise<{ success: boolean }> {
+    const result = await this.chatService.deleteConversation(
+      userId,
+      conversationId,
+      messageId,
+    );
+    return { success: result };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @SkipVerification()
+  @Get('/conversations/:conversationId/stream/token')
+  async getStreamToken(
+    @CurrentUserId() userId: string,
+    @Param('conversationId') conversationId: string,
+  ): Promise<{ token: string }> {
+    const result = await this.chatService.getStreamToken(
+      userId,
+      conversationId,
+    );
+    return { token: result };
+  }
+
   @UseGuards(CustomThrottlerGuard)
   @Throttle({ default: { ttl: 60, limit: 5 } })
   @Post('/media/upload')
@@ -113,33 +141,21 @@ export class ChatController {
     @Res() res: Response,
   ) {
     try {
-      const formData = new FormData();
-
-      formData.append(
-        'file',
-        new Blob([file.buffer], { type: file.mimetype }),
-        file.originalname,
+      const response = await this.chatService.uploadImageToConversation(
+        conversationId,
+        userId,
+        file,
+        fileName,
+        {
+          mimetype: file.mimetype,
+          originalname: file.originalname,
+        },
+        req,
       );
-
-      const response = await lastValueFrom(
-        this.httpService.post(
-          'http://localhost:3005/api/v1/chat/media/upload',
-          formData,
-          {
-            headers: {
-              'x-user-id': userId,
-              'x-conversation-id': conversationId,
-              'x-file-name': fileName,
-              'Content-Type': `multipart/form-data;`,
-              Authorization: req.headers['authorization'],
-            },
-          },
-        ),
-      );
-
       return response;
     } catch (error) {
       console.error('Error uploading file:', error);
+
       return { success: false, error: 'File upload failed' };
     }
   }
