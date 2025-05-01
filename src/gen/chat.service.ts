@@ -5,10 +5,20 @@
 // source: chat.service.proto
 
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
+import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 
-export const protobufPackage = 'chatProtoService';
+export const protobufPackage = "chatProtoService";
+
+export interface CheckMeetingAllowanceRequest {
+  userId: string;
+  conversationId: string;
+}
+
+export interface CheckMeetingAllowanceRequestResponse {
+  isAllowed: boolean;
+  metadata: MetadataDTO | undefined;
+}
 
 export interface GetStreamTokenRequest {
   userId: string;
@@ -45,22 +55,35 @@ export interface UserIdRequest {
   page: number;
 }
 
+export interface UserAbout {
+  workRole: string;
+  company: string;
+  country: string;
+  totalFollowers: number;
+  totalFollowing: number;
+  quote: string;
+  facebook: string;
+  twitter: string;
+  linkedin: string;
+  instagram: string;
+  school: string;
+}
+
 export interface User {
   id: string;
   name: string;
   avatar: string;
   phoneNumber: string;
-  country: string;
   address: string;
-  state: string;
-  city: string;
-  zipCode: string;
-  about: string;
-  role: string;
+  location: string;
+  about: UserAbout | undefined;
   isPublic: boolean;
   email: string;
   gender: string;
-  location: string;
+  phoneVerifiedAt: string;
+  emailVerifiedAt: string;
+  status: string;
+  role: string;
 }
 
 export interface Mention {
@@ -99,7 +122,9 @@ export interface Message {
   mentions: Mention[];
   previewUrl: Url[];
   emojis: Emoji[];
-  replyInfo: ReplyInfo | undefined;
+  replyInfo:
+    | ReplyInfo
+    | undefined;
   /** date time */
   createdAt: string;
   updatedAt: string;
@@ -170,34 +195,26 @@ export interface AddNewConversationResponse {
   metadata: MetadataDTO | undefined;
 }
 
-export const CHAT_PROTO_SERVICE_PACKAGE_NAME = 'chatProtoService';
+export const CHAT_PROTO_SERVICE_PACKAGE_NAME = "chatProtoService";
 
 export interface ChatServiceClient {
   /** chat */
 
   getOnlineUsers(request: UserIdRequest): Observable<GetOnlineUsersResponse>;
 
-  getRelatedConversations(
-    request: UserIdRequest,
-  ): Observable<GetRelatedConversationsResponse>;
+  getRelatedConversations(request: UserIdRequest): Observable<GetRelatedConversationsResponse>;
 
-  getConversationDetail(
-    request: ConversationDetailRequest,
-  ): Observable<GetConversationDetailResponse>;
+  getConversationDetail(request: ConversationDetailRequest): Observable<GetConversationDetailResponse>;
 
-  addNewConversation(
-    request: AddNewConversationRequest,
-  ): Observable<AddNewConversationResponse>;
+  addNewConversation(request: AddNewConversationRequest): Observable<AddNewConversationResponse>;
 
-  deleteMessage(
-    request: DeleteMessageRequest,
-  ): Observable<DeleteMessageResponse>;
+  deleteMessage(request: DeleteMessageRequest): Observable<DeleteMessageResponse>;
 
   /** stream */
 
-  getStreamToken(
-    request: GetStreamTokenRequest,
-  ): Observable<GetStreamTokenResponse>;
+  getStreamToken(request: GetStreamTokenRequest): Observable<GetStreamTokenResponse>;
+
+  checkMeetingAllowance(request: CheckMeetingAllowanceRequest): Observable<CheckMeetingAllowanceRequestResponse>;
 }
 
 export interface ChatServiceController {
@@ -205,10 +222,7 @@ export interface ChatServiceController {
 
   getOnlineUsers(
     request: UserIdRequest,
-  ):
-    | Promise<GetOnlineUsersResponse>
-    | Observable<GetOnlineUsersResponse>
-    | GetOnlineUsersResponse;
+  ): Promise<GetOnlineUsersResponse> | Observable<GetOnlineUsersResponse> | GetOnlineUsersResponse;
 
   getRelatedConversations(
     request: UserIdRequest,
@@ -219,69 +233,51 @@ export interface ChatServiceController {
 
   getConversationDetail(
     request: ConversationDetailRequest,
-  ):
-    | Promise<GetConversationDetailResponse>
-    | Observable<GetConversationDetailResponse>
-    | GetConversationDetailResponse;
+  ): Promise<GetConversationDetailResponse> | Observable<GetConversationDetailResponse> | GetConversationDetailResponse;
 
   addNewConversation(
     request: AddNewConversationRequest,
-  ):
-    | Promise<AddNewConversationResponse>
-    | Observable<AddNewConversationResponse>
-    | AddNewConversationResponse;
+  ): Promise<AddNewConversationResponse> | Observable<AddNewConversationResponse> | AddNewConversationResponse;
 
   deleteMessage(
     request: DeleteMessageRequest,
-  ):
-    | Promise<DeleteMessageResponse>
-    | Observable<DeleteMessageResponse>
-    | DeleteMessageResponse;
+  ): Promise<DeleteMessageResponse> | Observable<DeleteMessageResponse> | DeleteMessageResponse;
 
   /** stream */
 
   getStreamToken(
     request: GetStreamTokenRequest,
+  ): Promise<GetStreamTokenResponse> | Observable<GetStreamTokenResponse> | GetStreamTokenResponse;
+
+  checkMeetingAllowance(
+    request: CheckMeetingAllowanceRequest,
   ):
-    | Promise<GetStreamTokenResponse>
-    | Observable<GetStreamTokenResponse>
-    | GetStreamTokenResponse;
+    | Promise<CheckMeetingAllowanceRequestResponse>
+    | Observable<CheckMeetingAllowanceRequestResponse>
+    | CheckMeetingAllowanceRequestResponse;
 }
 
 export function ChatServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
-      'getOnlineUsers',
-      'getRelatedConversations',
-      'getConversationDetail',
-      'addNewConversation',
-      'deleteMessage',
-      'getStreamToken',
+      "getOnlineUsers",
+      "getRelatedConversations",
+      "getConversationDetail",
+      "addNewConversation",
+      "deleteMessage",
+      "getStreamToken",
+      "checkMeetingAllowance",
     ];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcMethod('ChatService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("ChatService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcStreamMethod('ChatService', method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("ChatService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const CHAT_SERVICE_NAME = 'ChatService';
+export const CHAT_SERVICE_NAME = "ChatService";

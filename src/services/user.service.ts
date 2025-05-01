@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { UserDomain } from 'src/domains/user.domain';
 import { Address } from 'src/gen/user.service';
@@ -7,6 +7,10 @@ import { BaseFindAndCountRequest } from 'src/models/request/base-find-and-count.
 import { CreateAddrestRequest } from 'src/models/request/create-address.request';
 import { UpdateAddressRequest } from 'src/models/request/update-address.request';
 import { UpdateUserRequest } from 'src/models/request/update-user.request';
+import {
+  convertToUserAboutProto,
+  convertToUserProto,
+} from 'src/utils/converters';
 
 @Injectable()
 export class UserService {
@@ -199,20 +203,8 @@ export class UserService {
 
     const resp = await firstValueFrom(
       userGrpc.updateUser({
+        ...omit(convertToUserProto(req), ['role']),
         id: userId,
-        gender: get(req, 'gender', ''),
-        photoUrl: get(req, 'photoUrl', ''),
-        country: get(req, 'country', ''),
-        city: get(req, 'city', ''),
-        address: get(req, 'address', ''),
-        state: get(req, 'state', ''),
-        zipCode: get(req, 'zipCode', ''),
-        about: get(req, 'about', ''),
-        role: '',
-        name: get(req, 'name', ''),
-        email: get(req, 'email', ''),
-        phoneNumber: get(req, 'phoneNumber', ''),
-        location: get(req, 'location', ''),
       }),
     );
 
