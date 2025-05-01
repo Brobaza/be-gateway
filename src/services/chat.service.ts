@@ -22,6 +22,29 @@ export class ChatService {
     private readonly configService: ConfigService,
   ) {}
 
+  async checkMeetingAllowance(
+    userId: string,
+    conversationId: string,
+  ): Promise<boolean> {
+    const { metadata, isAllowed } = await firstValueFrom(
+      this.chatDomain.getChatDomain().checkMeetingAllowance({
+        userId,
+        conversationId,
+      }),
+    );
+
+    if (metadata.code !== '200') {
+      this.logger.error(metadata.errMessage);
+
+      throw new InternalServerErrorException({
+        message: metadata.message,
+        code: metadata.code,
+      });
+    }
+
+    return isAllowed;
+  }
+
   async getOnlineUser(userId: string) {
     const { onlineUsers, metadata, total } = await firstValueFrom(
       this.chatDomain

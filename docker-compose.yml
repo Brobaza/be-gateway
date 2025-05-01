@@ -2,7 +2,7 @@ services:
   gateway:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.debug
     container_name: gateway
     restart: unless-stopped
     ports:

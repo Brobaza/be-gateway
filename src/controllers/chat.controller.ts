@@ -118,6 +118,20 @@ export class ChatController {
     return { token: result };
   }
 
+  @HttpCode(HttpStatus.OK)
+  @SkipVerification()
+  @Get('/conversations/:conversationId/permission')
+  async checkMeetingAllowance(
+    @CurrentUserId() userId: string,
+    @Param('conversationId') conversationId: string,
+  ): Promise<{ isAllowed: boolean }> {
+    const result = await this.chatService.checkMeetingAllowance(
+      userId,
+      conversationId,
+    );
+    return { isAllowed: result };
+  }
+
   @UseGuards(CustomThrottlerGuard)
   @Throttle({ default: { ttl: 60, limit: 5 } })
   @Post('/media/upload')
