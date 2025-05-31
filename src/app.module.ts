@@ -44,6 +44,9 @@ import { UserService } from './services/user.service';
 import { JwtAccessTokenStrategy } from './strategies/jwt-access-token.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh-token.strategy';
 import { HttpModule } from '@nestjs/axios';
+import { FileController } from './controllers/file.controller';
+import { FileService } from './services/file.service';
+import { S3Domain } from './domains/aws.domain';
 
 @Module({
   imports: [
@@ -145,7 +148,7 @@ import { HttpModule } from '@nestjs/axios';
           },
         }),
         inject: [ConfigService],
-      }
+      },
     ]),
 
     PassportModule.register({}),
@@ -168,6 +171,7 @@ import { HttpModule } from '@nestjs/axios';
     AuthController,
     ChatController,
     PostController,
+    FileController,
 
     // * client
     CliUserController,
@@ -190,12 +194,14 @@ import { HttpModule } from '@nestjs/axios';
     UserDomain,
     ChatDomain,
     PostDomain,
+    S3Domain, 
 
     // * services
     AuthService,
     UserService,
     ChatService,
-    PostService
+    PostService,
+    FileService,
   ],
 })
 export class AppModule {}

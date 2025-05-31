@@ -5,7 +5,7 @@ import { MICROSERVICE_SERVICE_NAME } from 'src/libs/constants/microservice.name'
 
 @Injectable()
 export class PostDomain implements OnModuleInit {
-  private postDomain:PostServiceClient;
+  private postDomain: PostServiceClient;
 
   constructor(
     @Inject(MICROSERVICE_SERVICE_NAME.POST_SERVICE)

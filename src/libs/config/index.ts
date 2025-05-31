@@ -118,6 +118,18 @@ export interface Configuration {
       path: string;
     };
   };
+  aws: {
+    accessKeyId: string;
+    secretAccessKey: string;
+    region: string;
+    s3: {
+      bucket: string;
+      url: string;
+    };
+    ses: {
+      from: string;
+    };
+  };
 }
 
 const redisLockSchema = joi.object({
@@ -245,6 +257,19 @@ const verificationSchema = joi.object({
   }),
 });
 
+const awsSchema = joi.object({
+  accessKeyId: joi.string().required(),
+  secretAccessKey: joi.string().required(),
+  region: joi.string().required(),
+  s3: joi.object({
+    bucket: joi.string().required(),
+    url: joi.string().required(),
+  }),
+  ses: joi.object({
+    from: joi.string().required(),
+  }),
+});
+
 const configSchema = joi.object<Configuration>({
   port: joi.number().required(),
   isProd: joi.boolean().required(),
@@ -266,6 +291,7 @@ const configSchema = joi.object<Configuration>({
   services: servicesSchema.required(),
   redisLock: redisLockSchema.required(),
   verification: verificationSchema.required(),
+  aws: awsSchema.required(),
 });
 
 export const loadConfiguration = (): Configuration => {
