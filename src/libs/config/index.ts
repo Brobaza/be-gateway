@@ -89,6 +89,12 @@ export interface Configuration {
       version: string;
       container_name: string;
     };
+    post: {
+      port: string;
+      prefix: string;
+      version: string;
+      container_name: string;
+    };
   };
   redisLock: {
     driftFactor: number;
@@ -209,6 +215,12 @@ const servicesSchema = joi.object({
     container_name: joi.string().required(),
   }),
   chat: joi.object({
+    port: joi.string().required(),
+    prefix: joi.string().required(),
+    version: joi.string().required(),
+    container_name: joi.string().required(),
+  }),
+  post: joi.object({
     port: joi.string().required(),
     prefix: joi.string().required(),
     version: joi.string().required(),
