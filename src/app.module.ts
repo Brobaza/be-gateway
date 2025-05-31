@@ -10,8 +10,10 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
 import { AuthController } from './controllers/auth.controller';
 import { ChatController } from './controllers/chat.controller';
+import { PostController } from './controllers/post.controller';
 import { CliUserController } from './controllers/client/user.controller';
 import { ChatDomain } from './domains/chat.domain';
+import { PostDomain } from './domains/post.domain';
 import { TransactionDomain } from './domains/transaction.domain';
 import { UserDomain } from './domains/user.domain';
 import { loadConfiguration } from './libs/config';
@@ -37,6 +39,7 @@ import { WishList } from './models/entity/wish_list.entity';
 import { AppService } from './services/app.service';
 import { AuthService } from './services/auth.service';
 import { ChatService } from './services/chat.service';
+import { PostService } from './services/post.service';
 import { UserService } from './services/user.service';
 import { JwtAccessTokenStrategy } from './strategies/jwt-access-token.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh-token.strategy';
@@ -130,6 +133,19 @@ import { HttpModule } from '@nestjs/axios';
         }),
         inject: [ConfigService],
       },
+      {
+        imports: [ConfigModule],
+        name: MICROSERVICE_SERVICE_NAME.POST_SERVICE,
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            protoPath: join(__dirname, '../proto/post.service.proto'),
+            package: MICROSERVICE_PACKAGE_NAME.POST_SERVICE,
+            url: `${configService.get<string>('services.post.container_name')}:${configService.get<string>('services.post.port')}`,
+          },
+        }),
+        inject: [ConfigService],
+      }
     ]),
 
     PassportModule.register({}),
@@ -151,6 +167,7 @@ import { HttpModule } from '@nestjs/axios';
     // * common
     AuthController,
     ChatController,
+    PostController,
 
     // * client
     CliUserController,
@@ -172,11 +189,13 @@ import { HttpModule } from '@nestjs/axios';
     // * domain
     UserDomain,
     ChatDomain,
+    PostDomain,
 
     // * services
     AuthService,
     UserService,
     ChatService,
+    PostService
   ],
 })
 export class AppModule {}
