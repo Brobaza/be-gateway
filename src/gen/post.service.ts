@@ -19,8 +19,6 @@ export interface GetListPostRequest {
 export interface CreatePostRequest {
   authorId: string;
   content: string;
-  hashtags: string[];
-  links: string[];
   taggedUserIds: string[];
   images: string[];
   postParentId: string;
@@ -29,6 +27,8 @@ export interface CreatePostRequest {
 
 export interface GetPostByUserIdRequest {
   userId: string;
+  limit: number;
+  page: number;
 }
 
 export interface GetPostOnDashBoardReq {
@@ -51,8 +51,6 @@ export interface CreatePostReactionRequest {
 export interface UpdatePostRequest {
   authorId: string;
   content: string;
-  hashtags: string[];
-  links: string[];
   taggedUserIds: string[];
   images: string[];
   postParentId: string;
@@ -70,7 +68,13 @@ export interface CreatePostResponse {
   postParentId: string;
   postId: string;
   postType: string;
+  createdAt: string;
+  comment: CreateCommentResponse[];
   metaData: MetaData | undefined;
+}
+
+export interface GetPostDetailRequest {
+  postId: string;
 }
 
 export interface Post {
@@ -98,6 +102,8 @@ export interface TestPostResponse {
 export interface GetListPostOnOtherUserReq {
   userId: string;
   friendId: string;
+  limit: number;
+  page: number;
 }
 
 export interface MetaData {
@@ -108,8 +114,6 @@ export interface MetaData {
 export interface CreateCommentRequest {
   authorId: string;
   content: string;
-  hashtags: string[];
-  links: string[];
   taggedUserIds: string[];
   images: string[];
   commentParentId: string;
@@ -119,8 +123,6 @@ export interface CreateCommentRequest {
 export interface UpdateCommentRequest {
   authorId: string;
   content: string;
-  hashtags: string[];
-  links: string[];
   taggedUserIds: string[];
   images: string[];
   commentParentId: string;
@@ -138,6 +140,7 @@ export interface CreateCommentResponse {
   commentParentId: string;
   postId: string;
   commentId: string;
+  createAt: string;
   metaData: MetaData | undefined;
 }
 
@@ -154,6 +157,36 @@ export interface CreateCommentReactionRequest {
   commentId: string;
   userId: string;
   reactionType: string;
+}
+
+export interface Story {
+  storyId: string;
+  authorId: string;
+  images: string[];
+  storyType: string;
+  createdAt: string;
+  viewType: string;
+}
+
+export interface CreateStoryRequest {
+  authorId: string;
+  images: string[];
+  storyType: string;
+  viewType: string;
+}
+
+export interface CreateStoryResponse {
+  storyId: string;
+  metaData: MetaData | undefined;
+}
+
+export interface GetListStoryRequest {
+  userId: string;
+}
+
+export interface GetListStoryResponse {
+  story: Story[];
+  metaData: MetaData | undefined;
 }
 
 export const POST_PROTO_SERVICE_PACKAGE_NAME = "postProtoService";
@@ -177,6 +210,8 @@ export interface PostServiceClient {
 
   createReactionPost(request: CreatePostReactionRequest): Observable<MetaData>;
 
+  getPostDetail(request: GetPostDetailRequest): Observable<CreatePostResponse>;
+
   /** comment */
 
   updateComment(request: UpdateCommentRequest): Observable<CreateCommentResponse>;
@@ -186,6 +221,12 @@ export interface PostServiceClient {
   getListComment(request: GetListCommentRequest): Observable<ListCommentResponse>;
 
   createReactionComment(request: CreateCommentReactionRequest): Observable<MetaData>;
+
+  /** story */
+
+  createStory(request: CreateStoryRequest): Observable<CreateStoryResponse>;
+
+  getListStory(request: GetListStoryRequest): Observable<GetListStoryResponse>;
 }
 
 export interface PostServiceController {
@@ -219,6 +260,10 @@ export interface PostServiceController {
 
   createReactionPost(request: CreatePostReactionRequest): Promise<MetaData> | Observable<MetaData> | MetaData;
 
+  getPostDetail(
+    request: GetPostDetailRequest,
+  ): Promise<CreatePostResponse> | Observable<CreatePostResponse> | CreatePostResponse;
+
   /** comment */
 
   updateComment(
@@ -234,6 +279,16 @@ export interface PostServiceController {
   ): Promise<ListCommentResponse> | Observable<ListCommentResponse> | ListCommentResponse;
 
   createReactionComment(request: CreateCommentReactionRequest): Promise<MetaData> | Observable<MetaData> | MetaData;
+
+  /** story */
+
+  createStory(
+    request: CreateStoryRequest,
+  ): Promise<CreateStoryResponse> | Observable<CreateStoryResponse> | CreateStoryResponse;
+
+  getListStory(
+    request: GetListStoryRequest,
+  ): Promise<GetListStoryResponse> | Observable<GetListStoryResponse> | GetListStoryResponse;
 }
 
 export function PostServiceControllerMethods() {
@@ -247,10 +302,13 @@ export function PostServiceControllerMethods() {
       "getListPostOnOtherUser",
       "getListPostOnDashBoard",
       "createReactionPost",
+      "getPostDetail",
       "updateComment",
       "createComment",
       "getListComment",
       "createReactionComment",
+      "createStory",
+      "getListStory",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
