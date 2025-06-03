@@ -14,6 +14,7 @@ import {
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUserId, SkipVerification } from 'src/decorators';
 import { SessionType } from 'src/enums/session-type.enum';
+import { GetUserResponse } from 'src/gen/user.service';
 import { JwtAccessTokenGuard } from 'src/guards/jwt-access-token.guard';
 import { BaseFindAndCountRequest } from 'src/models/request/base-find-and-count.request';
 import { CreateAddrestRequest } from 'src/models/request/create-address.request';
@@ -126,5 +127,15 @@ export class CliUserController {
     return {
       success: true,
     };
+  }
+
+  @ApiResponse({ type: () => FindAndCountResponse<GetUserResponse> })
+  @HttpCode(HttpStatus.OK)
+  @Get('/friends')
+  async findAndCountUsers(
+    @CurrentUserId() userId: string,
+  ): Promise<FindAndCountResponse<GetUserResponse>> {
+    const result = await this.userService.getFriends(userId);
+    return result;
   }
 }
