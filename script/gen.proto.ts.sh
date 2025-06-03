@@ -17,3 +17,6 @@ protoc --plugin=protoc-gen-ts_proto=".\node_modules\.bin\protoc-gen-ts_proto.cmd
 
 // * test gen
 protoc --plugin=protoc-gen-ts_proto=".\node_modules\.bin\protoc-gen-ts_proto.cmd" --proto_path=./proto --ts_proto_out=./proto --ts_proto_opt=nestJs=true ./proto/auth.service.proto
+
+// * post
+protoc --plugin=protoc-gen-ts_proto=".\node_modules\.bin\protoc-gen-ts_proto.cmd" --proto_path=./proto --ts_proto_out=./proto --ts_proto_opt=nestJs=true ./proto/post.service.proto
